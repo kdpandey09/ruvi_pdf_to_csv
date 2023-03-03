@@ -16,23 +16,16 @@ def convert_folder_to_csv():
             file_path = os.path.join(folder_path, file_name)
             if os.path.isfile(file_path) and file_path.lower().endswith('.pdf'):
                 lst.append(os.path.abspath(file_path))
-        # for file in files_path:
-        #     if ".pdf" in file:
-        #         lst.append(file)
-        # # print(lst)
+    
         csv_data = []
-        # printing number of pages in pdf file
         for ele in lst:
-            # getting a specific page from the pdf file
             reader = PdfReader(ele)
             text = ""
             for i in range(len(reader.pages)):
                 page = reader.pages[i]
                 text += page.extract_text().replace("Page 1 of {page}".format(page=len(reader.pages)), "").replace(
                     "Page 2 of {page}".format(page=len(reader.pages)), "").replace("\n", " ")
-        # print(text)
-        # extracting text from page
-        # text = 'COURIER SHIPPING BILL(CSB)-V[SEE REGULATION 6(3)]CSB Number: CSBV_DEL_2022-2023_0602_11484Filling Date: 06/02/2023DETAILS OF AUTHORIZED COURIERCourier Registration Num-ber:AABCF6516AACDELCourier Name: FEDEXAddress 1: IGI Address 2: N/ACity:NEW DELHI Postal/Zip Code: 110058State:DELHI Custom Station Name DELAIRLINE AND FLIGHT NUMBER DETAILSAirlines: FEDERAL EXPRESS Flight Number: FX 5279Port of Loading: DEL Date of Departure: 07/02/2023DETAILS OF HAWBS EXPORTEDHAWB Number: 394185355980 Number of Packages /Pieces / Bags / ULD:1Declared Weight(in Kgs): 1.5 Airport of Destination: YYZImport Export Code (IEC): AAMCR2292Q IEC Branch Code:lundInvoice Term: CIF MHBS No:ttyExport Using e-Commerce: Y Under MEIS Scheme: NOif Export using E-Commerceis Yes and the export con-signment contains jewelleryfalling under CTH 7117 or7113:(i) Name of E-commerce Op-erator or Website :(iii) Order No :(ii) Payment/unique transac-tion ID :(iv) Order Date :AD Code: 6390047 Account No:Government/Non-Government:NON-GOVERNMENT NFEI:NOStatus: EXPCLOSED LEO DATE: 06/02/23FOB Value (In INR): 2431.5 FOB Value (In Foreign Cur-rency):30.00FOB Exchange Rate (In For-eign Currency):81.05 FOB Currency (In ForeignCurrency):USDCEM DETAILSEGM Number: 3839351 EGM Date: 07/02/2023CONSIGNOR AND CONSIGNEE DETAILSName of the Consignor: RUVI CROSS BORDER PRIVATE LIMITEDAddress of the Consignor: 30 CHIRAG COMPLEX PANRIYO KI MADARI UDAIPUR India 313002Name of the Consignee: ASHLEY MURISONAddress of the Consignee: 6805 RUE METIVIER MONTREALQCH4K 1J6 MONTREAL Canada H4K1J6GSTIN DETAILSKYC Document: GSTIN (Normal) KYC ID: 08AAMCR2292Q1ZIState Code: 08GSTIN Uploaded To ICEGATE Server: NOINVOICE DETAILSInvoice Number: Invoice Date: Invoice Value (in INR):Page 1 of 296 03/02/2023 2431.5ITEM DETAILSCTSH:42021190(ii) SKU NO : (iii) Type of Jewellery :Goods Description: LAPTOP BAGQuantity: 1 Unit Of Measure: PCSUnit Price: 30 Total Item Value: 30Unit Price Currency: USD Exchange Rate: 81.05Total Item Value (In INR): 2431.5 Total Taxable Value: 30Taxable Value Currency: USD Total IGST Paid: 0BOND OR UT: YES Total CESS Paid: 0Purity : Whether studded or set withprecious/semipreciousstones :Wt.(in gm): If yes, :(a) Diamond(a) Cut : (b) Color :(c) Clarity : (d) Carat :(e) No.of.Stones :(b) If other precious or semiprecious stone(a) Name of the stone : (b) Whether Natural or Syn-thetic :(c) No. of Stones: (d) Country of origin :CRN DETAILSCRN Number: CRN MHBS Number:394185355980DECLARATION(i) I/We hereby declare that the exporter mentioned above has authorised us for booking the shipment under the Courier Airway bill andact as an agent for clearance and export of the goods described above.(ii) I/We hereby declare that on the basis of declaration of the exporter, I/We shall abide by the declaration in CSB-V, above.Port : New Courier Terminal 1IGI Airport NewDelhi-110037Note: This is an electronic copy, therefore physical signature is not required@CopyRight Information 2022-2023Page 2 of 2'
+        
             try:
                 data = {"CSB Number": re.search(r'(?<=CSB Number:\s).+?(?=Filling Date)', text).group(0).strip(),
                         "Filling Date": re.search(r'(?<=Filling Date:)+\s*\d{1,2}\/\d{1,2}\/\d{4}', text).group(0).strip(),
@@ -122,13 +115,7 @@ def convert_folder_to_csv():
                         "Country of origin "+str(i+1): ((re.findall(r'(?<=Country of origin :).+?(?=[Invoice Number]|[CRN DETAILS])', text)[i].strip() if (re.search(r'(?<=Country of origin :).+?(?=[Invoice Number]|[CRN DETAILS])', text)) else " ")),
                     }
                     data.update(item_data)
-                # match = re.search(r'(?<=IEC Branch Code:).+?(?=Invoice Term)', text)
-                # iec_branch_code = match.group(0) if match else ""
                 csv_data.append(data)
-                # data = {"IEC Branch Code": iec_branch_code}
-                # print(data,"ghryh")
-
-                # Display a message box indicating that the conversion was successful
 
             except Exception as e:
                 pass
